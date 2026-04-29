@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendar · Breeden's Point</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="calendar-body">
+  <div class="calendar-container">
+
+    <header class="calendar-header">
+      <div>
+        <h1>Breeden's Point Calendar</h1>
+        <p id="user-mode-label" class="site-tagline" style="margin: 0;"></p>
+      </div>
+      <nav class="month-nav">
+        <button id="prev-month" aria-label="Previous month">‹</button>
+        <span id="month-label">Loading…</span>
+        <button id="next-month" aria-label="Next month">›</button>
+      </nav>
+    </header>
+
+    <div class="calendar-grid" id="calendar-grid">
+      <!-- Day name headers + day cells get injected by JS -->
+    </div>
+
+    <p style="margin-top: 1.5rem; text-align: center;">
+      <a href="house.html">→ House info</a>
+      &nbsp;·&nbsp;
+      <a href="index.html" id="logout-link">Sign out</a>
+    </p>
+  </div>
+
+  <!-- Claim modal -->
+  <div class="modal-backdrop" id="claim-modal" hidden>
+    <div class="modal">
+      <h3 id="claim-modal-title">Claim this date</h3>
+      <p id="claim-modal-subtitle" class="site-tagline" style="margin-top: 0;"></p>
+
+      <div id="existing-claims-section" hidden>
+        <strong>Already claimed:</strong>
+        <div class="existing-claims" id="existing-claims-list"></div>
+      </div>
+
+      <div id="conflict-warning" class="conflict-warning" hidden>
+        ⚠️ Heads up — this date already has a claim. Both will be visible. Coordinate with the family before locking it in.
+      </div>
+
+      <form id="claim-form">
+        <label for="claim-name">Your name</label>
+        <input type="text" id="claim-name" maxlength="40" required placeholder="e.g. Anthony" />
+
+        <label for="claim-end-date">Through (optional — for multi-day stays)</label>
+        <input type="date" id="claim-end-date" />
+
+        <label for="claim-note" id="claim-note-label">Note (optional)</label>
+        <textarea id="claim-note" maxlength="200" placeholder="e.g. having Anthony's college friends down"></textarea>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="claim-cancel">Cancel</button>
+          <button type="submit" class="btn-primary" id="claim-submit">Claim it</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase + app logic -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>

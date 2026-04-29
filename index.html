@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Breeden's Point</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="landing-body">
+  <div class="landing-container">
+    <header class="landing-header">
+      <h1 class="site-title">Breeden's Point</h1>
+      <p class="site-tagline">The river house, on the calendar.</p>
+    </header>
+
+    <section class="hero">
+      <div class="hero-image-placeholder">
+        <span>Photo of Breeden's Point goes here</span>
+      </div>
+    </section>
+
+    <section class="gate">
+      <h2>Enter to continue</h2>
+      <p class="gate-help">Family code unlocks everything. Guest code unlocks the calendar &amp; house info.</p>
+
+      <form id="gate-form" class="gate-form" autocomplete="off">
+        <input
+          type="password"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="4"
+          id="gate-code"
+          placeholder="Enter 4-digit code"
+          aria-label="4-digit access code"
+          required
+        />
+        <button type="submit">Enter</button>
+      </form>
+      <p id="gate-error" class="gate-error" hidden>That code didn't work. Try again.</p>
+    </section>
+
+    <section class="coming-soon">
+      <h3>What's here</h3>
+      <ul class="feature-list">
+        <li><strong>Calendar</strong> — claim your weekend. Live now.</li>
+        <li><strong>House Info</strong> — Wi-Fi, HVAC, the basics. Live now.</li>
+        <li><strong>Memories</strong> — past weekends, photos, stories. <em>Coming soon.</em></li>
+        <li><strong>Supplies</strong> — what's stocked, what's running low. <em>Coming soon.</em></li>
+      </ul>
+    </section>
+
+    <footer class="landing-footer">
+      <small>Breeden's Point · Lusby, Maryland</small>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
