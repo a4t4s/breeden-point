@@ -79,6 +79,9 @@ button { font-family: var(--font-body); cursor: pointer; }
 
 .hero-image {
   width: 100%;
+  max-height: 45vh;
+  object-fit: cover;
+  object-position: center;
   border-radius: var(--radius-lg);
   display: block;
   border: 1px solid var(--color-border);
