@@ -35,33 +35,65 @@
   <!-- Claim modal -->
   <div class="modal-backdrop" id="claim-modal" hidden>
     <div class="modal">
-      <h3 id="claim-modal-title">Claim this date</h3>
+      <h3 id="claim-modal-title">New reservation</h3>
       <p id="claim-modal-subtitle" class="site-tagline" style="margin-top: 0;"></p>
 
       <div id="existing-claims-section" hidden>
-        <strong>Already claimed:</strong>
+        <strong>Already on this date:</strong>
         <div class="existing-claims" id="existing-claims-list"></div>
       </div>
 
+      <div id="hard-block-warning" class="conflict-warning hard-block" hidden>
+        🚫 This date is reserved by family. Guests can't book over family dates. Please reach out to the family to coordinate.
+      </div>
+
       <div id="conflict-warning" class="conflict-warning" hidden>
-        ⚠️ Heads up — this date already has a claim. Both will be visible. Coordinate with the family before locking it in.
+        ⚠️ Heads up — there's already a guest claim on these dates. Family bookings take priority, but please give them a heads up.
       </div>
 
       <form id="claim-form">
-        <label for="claim-name">Your name</label>
-        <input type="text" id="claim-name" maxlength="40" required placeholder="e.g. Anthony" />
+        <label for="claim-name">Booked by</label>
+        <input type="text" id="claim-name" maxlength="40" required placeholder="Your name" />
 
-        <label for="claim-end-date">Through (optional — for multi-day stays)</label>
-        <input type="date" id="claim-end-date" />
+        <div class="date-row">
+          <div>
+            <label for="claim-start-date">Arrive</label>
+            <input type="date" id="claim-start-date" required />
+          </div>
+          <div>
+            <label for="claim-end-date">Depart</label>
+            <input type="date" id="claim-end-date" required />
+          </div>
+        </div>
 
-        <label for="claim-note" id="claim-note-label">Note (optional)</label>
-        <textarea id="claim-note" maxlength="200" placeholder="e.g. having Anthony's college friends down"></textarea>
+        <div id="party-section">
+          <label>Who's coming</label>
+          <div class="party-grid" id="party-grid">
+            <!-- buttons injected by JS -->
+          </div>
+          <p class="party-helper">Tap to add. Tap again to remove.</p>
+        </div>
+
+        <label for="claim-note">Notes (optional)</label>
+        <textarea id="claim-note" maxlength="300" placeholder="Anything else? e.g. arriving late Friday, bringing extra guests not listed"></textarea>
 
         <div class="modal-actions">
           <button type="button" class="btn-secondary" id="claim-cancel">Cancel</button>
-          <button type="submit" class="btn-primary" id="claim-submit">Claim it</button>
+          <button type="submit" class="btn-primary" id="claim-submit">Save reservation</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Reservation detail modal (for viewing/deleting) -->
+  <div class="modal-backdrop" id="detail-modal" hidden>
+    <div class="modal">
+      <h3 id="detail-modal-title">Reservation</h3>
+      <div id="detail-modal-body"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="detail-close">Close</button>
+        <button type="button" class="btn-danger" id="detail-delete" hidden>Delete reservation</button>
+      </div>
     </div>
   </div>
 
