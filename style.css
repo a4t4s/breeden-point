@@ -430,7 +430,50 @@ button { font-family: var(--font-body); cursor: pointer; }
   color: var(--color-ink-soft);
   margin-bottom: 0.25rem;
 }
+/* Custom party input */
+.custom-party-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
 
+.custom-party-row input {
+  flex: 1;
+}
+
+.custom-party-row button {
+  padding: 0.5rem 1rem !important;
+  border-radius: var(--radius);
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.party-chip.custom {
+  background: var(--color-ink-soft);
+  border-color: var(--color-ink-soft);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.chip-remove {
+  background: rgba(255,255,255,0.25);
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.chip-remove:hover {
+  background: rgba(255,255,255,0.45);
+}
 /* Responsive */
 @media (max-width: 600px) {
   .day-cell { min-height: 60px; padding: 0.25rem; }
