@@ -34,7 +34,6 @@ const FAMILY_CODE = "8008";
 const GUEST_CODE = "0001";
 
 // ---------- The roster ----------
-// Edit this list to add or remove people. `pet: true` shows a paw icon.
 const ROSTER = [
   { name: "Paul" },
   { name: "Trish" },
@@ -105,7 +104,8 @@ if (calendarGrid) {
   let currentMonth = new Date().getMonth();
   let claimsByDate = {};
   let claimsListenerUnsub = null;
-  let selectedParty = new Set();
+  let selectedParty = new Set();      // roster names that are selected
+  let customParty = [];               // typed-in names not in the roster
 
   const monthLabel = document.getElementById("month-label");
   const userModeLabel = document.getElementById("user-mode-label");
@@ -143,13 +143,9 @@ if (calendarGrid) {
     return `${year}-${m}-${d}`;
   }
 
-  // Compact display label for a claim tag: "Anthony" or "Anthony +4"
   function tagLabelFor(claim) {
-    const partySize = (claim.party && claim.party.length) ? claim.party.length : 0;
-    // If the booker name is also in the party, we don't double count
     const others = claim.party ? claim.party.filter(n => n !== claim.name).length : 0;
     if (others > 0) return `${claim.name} +${others}`;
-    if (partySize > 0 && !claim.party.includes(claim.name)) return `${claim.name} +${partySize}`;
     return claim.name;
   }
 
@@ -269,8 +265,9 @@ if (calendarGrid) {
   const claimCancel = document.getElementById("claim-cancel");
   const claimSubmit = document.getElementById("claim-submit");
   const partyGrid = document.getElementById("party-grid");
+  const customPartyInput = document.getElementById("custom-party-input");
+  const customPartyAdd = document.getElementById("custom-party-add");
 
-  // Update notes placeholder
   if (claimNote) {
     claimNote.placeholder = "e.g. arriving late, dinner plans";
   }
@@ -281,6 +278,8 @@ if (calendarGrid) {
       return;
     }
     partyGrid.innerHTML = "";
+
+    // Roster chips
     ROSTER.forEach((p) => {
       const chip = document.createElement("div");
       chip.className = "party-chip" + (p.pet ? " pet" : "");
@@ -298,10 +297,52 @@ if (calendarGrid) {
       });
       partyGrid.appendChild(chip);
     });
+
+    // Custom (typed-in) chips, always shown selected with an X to remove
+    customParty.forEach((name) => {
+      const chip = document.createElement("div");
+      chip.className = "party-chip custom selected";
+      chip.innerHTML = `${escapeHtml(name)} <span class="chip-remove" aria-label="Remove">×</span>`;
+      chip.querySelector(".chip-remove").addEventListener("click", (e) => {
+        e.stopPropagation();
+        customParty = customParty.filter(n => n !== name);
+        buildPartyChips();
+      });
+      partyGrid.appendChild(chip);
+    });
+  }
+
+  function addCustomName() {
+    if (!customPartyInput) return;
+    const val = customPartyInput.value.trim();
+    if (!val) return;
+    // Don't double-add — already in roster (just select it) or custom list
+    const inRoster = ROSTER.some(p => p.name.toLowerCase() === val.toLowerCase());
+    if (inRoster) {
+      const matched = ROSTER.find(p => p.name.toLowerCase() === val.toLowerCase());
+      selectedParty.add(matched.name);
+    } else if (!customParty.some(n => n.toLowerCase() === val.toLowerCase())) {
+      customParty.push(val);
+    }
+    customPartyInput.value = "";
+    buildPartyChips();
+  }
+
+  if (customPartyAdd) {
+    customPartyAdd.addEventListener("click", addCustomName);
+  }
+  if (customPartyInput) {
+    customPartyInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        addCustomName();
+      }
+    });
   }
 
   function openClaimModal(key) {
     selectedParty = new Set();
+    customParty = [];
 
     const [yyyy, mm, dd] = key.split("-");
     const dateObj = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
@@ -314,7 +355,6 @@ if (calendarGrid) {
     modalTitle.textContent = "New reservation";
     modalSubtitle.textContent = `${pretty} · ${mode === "guest" ? "Booking as Guest" : "Booking as Family"}`;
 
-    // Existing claims list (tappable)
     existingSection.hidden = existing.length === 0;
     existingList.innerHTML = "";
     existing.forEach((c) => {
@@ -328,9 +368,7 @@ if (calendarGrid) {
       existingList.appendChild(item);
     });
 
-    // Conflict logic
     const familyOnDate = existing.some(c => !c.isGuest);
-    const guestOnDate = existing.some(c => c.isGuest);
 
     hardBlockWarning.hidden = true;
     conflictWarning.hidden = true;
@@ -343,15 +381,14 @@ if (calendarGrid) {
       conflictWarning.hidden = false;
     }
 
-    // Reset form
     claimForm.reset();
     claimName.value = "";
     claimNote.value = "";
+    if (customPartyInput) customPartyInput.value = "";
     claimStartDate.value = key;
     claimEndDate.value = key;
     claimEndDate.min = key;
 
-    // Build chips fresh every time the modal opens
     buildPartyChips();
 
     claimModal.hidden = false;
@@ -364,13 +401,10 @@ if (calendarGrid) {
       if (!claimEndDate.value || claimEndDate.value < claimStartDate.value) {
         claimEndDate.value = claimStartDate.value;
       }
-      // Re-check guest hard-block based on the new range
       revalidateGuestRange();
     }
   });
-  claimEndDate.addEventListener("change", () => {
-    revalidateGuestRange();
-  });
+  claimEndDate.addEventListener("change", revalidateGuestRange);
 
   function revalidateGuestRange() {
     if (mode !== "guest") return;
@@ -404,7 +438,6 @@ if (calendarGrid) {
     const endVal = claimEndDate.value || startVal;
     if (!name || !startVal) return;
 
-    // Final guest hard-block check
     if (mode === "guest" && isRangeFamilyBlocked(startVal, endVal)) {
       hardBlockWarning.hidden = false;
       claimSubmit.disabled = true;
@@ -417,13 +450,16 @@ if (calendarGrid) {
     let end = new Date(ey, em - 1, ed);
     if (end < start) end = start;
 
+    // Combine roster picks + custom names into one party array
+    const fullParty = [...Array.from(selectedParty), ...customParty];
+
     try {
       claimSubmit.disabled = true;
       claimSubmit.textContent = "Saving…";
       await addDoc(collection(db, "claims"), {
         name,
         note,
-        party: Array.from(selectedParty),
+        party: fullParty,
         isGuest: mode === "guest",
         startDate: Timestamp.fromDate(start),
         endDate: Timestamp.fromDate(end),
@@ -465,7 +501,6 @@ if (calendarGrid) {
     closeClaimModal();
 
     const isHidden = mode === "guest" && !claim.isGuest;
-
     detailTitle.textContent = isHidden ? "Reserved" : `${claim.name}'s reservation`;
 
     const fmt = (d) => d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
