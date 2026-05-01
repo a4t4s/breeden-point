@@ -38,7 +38,7 @@ const ROSTER = [
   { name: "Paul" },
   { name: "Trish" },
   { name: "Murphy", pet: true },
-  { name: "Darnel" },
+  { name: "Darnell" },
   { name: "Chessie" },
   { name: "Miles" },
   { name: "Luna" },
@@ -48,7 +48,7 @@ const ROSTER = [
   { name: "Anthony" },
   { name: "Lexie" },
   { name: "Rick" },
-  { name: "Sloan" },
+  { name: "Sloane" },
   { name: "Sydney" },
   { name: "Cosmo", pet: true },
   { name: "Dude", pet: true }
